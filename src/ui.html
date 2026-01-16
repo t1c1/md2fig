@@ -2,88 +2,251 @@
 <html>
 <head>
   <style>
+    * {
+      box-sizing: border-box;
+    }
     body {
-      font-family: Arial, sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
       background: #f5f5f5;
-      padding: 20px;
+      padding: 16px;
       margin: 0;
+      font-size: 13px;
     }
     .container {
       display: flex;
       flex-direction: column;
-      gap: 16px;
-      max-width: 600px;
-      margin: 0 auto;
+      gap: 14px;
       background: white;
-      padding: 20px;
+      padding: 18px;
       border-radius: 8px;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    }
+    h2 {
+      margin: 0 0 4px 0;
+      font-size: 16px;
+      font-weight: 600;
+    }
+    .subtitle {
+      color: #666;
+      font-size: 12px;
+      margin-bottom: 8px;
     }
     .field {
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      gap: 6px;
     }
     label {
-      font-weight: bold;
+      font-weight: 500;
+      font-size: 12px;
+      color: #333;
     }
     textarea {
       width: 100%;
-      height: 200px;
+      height: 260px;
       resize: vertical;
-      padding: 12px;
-      font-family: monospace;
-      border: 1px solid #ccc;
-      border-radius: 4px;
+      padding: 10px;
+      font-family: "SF Mono", Monaco, Consolas, monospace;
+      font-size: 11px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
       line-height: 1.5;
+      background: #fafafa;
     }
-    button {
+    textarea:focus {
+      outline: none;
+      border-color: #007bfc;
+      background: #fff;
+    }
+    select {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      font-size: 13px;
+      background: white;
+      cursor: pointer;
+    }
+    select:focus {
+      outline: none;
+      border-color: #007bfc;
+    }
+    .templates {
+      display: flex;
+      gap: 8px;
+    }
+    .template-btn {
+      flex: 1;
+      padding: 10px 8px;
+      border: 2px solid #e0e0e0;
+      border-radius: 6px;
+      background: white;
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.15s ease;
+    }
+    .template-btn:hover {
+      border-color: #999;
+    }
+    .template-btn.selected {
+      border-color: #007bfc;
+      background: #f0f7ff;
+    }
+    .template-btn .name {
+      font-weight: 600;
+      font-size: 12px;
+      margin-bottom: 2px;
+    }
+    .template-btn .desc {
+      font-size: 10px;
+      color: #666;
+    }
+    button.primary {
       background: #007bfc;
       color: white;
       border: none;
       padding: 12px;
-      border-radius: 5px;
-      font-size: 16px;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 500;
       cursor: pointer;
-      align-self: center;
+      transition: background 0.15s ease;
     }
-    button:hover {
-      background: #005bb5;
+    button.primary:hover {
+      background: #0066d6;
+    }
+    button.primary:active {
+      background: #0055b3;
     }
     .error-message {
-      color: red;
-      font-size: 14px;
-      margin-top: -8px;
+      color: #d32f2f;
+      font-size: 12px;
+      padding: 8px;
+      background: #ffebee;
+      border-radius: 4px;
+      display: none;
+    }
+    .error-message.visible {
+      display: block;
+    }
+    .help {
+      font-size: 11px;
+      color: #888;
+      line-height: 1.4;
+    }
+    .help code {
+      background: #f0f0f0;
+      padding: 1px 4px;
+      border-radius: 3px;
+      font-family: "SF Mono", Monaco, Consolas, monospace;
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <h2>Markdown to Figma</h2>
-    <div class="field">
-      <label for="markdown-input">Paste your Markdown content:</label>
-      <textarea id="markdown-input" placeholder="Paste your Markdown here..."></textarea>
+    <div>
+      <h2>md2fig</h2>
+      <div class="subtitle">Markdown to Figma Resume</div>
     </div>
-    <button id="generate">Generate Output</button>
+
+    <div class="field">
+      <label>Template</label>
+      <div class="templates">
+        <button type="button" class="template-btn selected" data-template="classic">
+          <div class="name">Classic</div>
+          <div class="desc">Traditional</div>
+        </button>
+        <button type="button" class="template-btn" data-template="modern">
+          <div class="name">Modern</div>
+          <div class="desc">Spacious</div>
+        </button>
+        <button type="button" class="template-btn" data-template="compact">
+          <div class="name">Compact</div>
+          <div class="desc">Dense</div>
+        </button>
+      </div>
+    </div>
+
+    <div class="field">
+      <label for="markdown-input">Markdown</label>
+      <textarea id="markdown-input" placeholder="# Your Name
+
+## Summary
+Brief professional summary here.
+
+## Experience
+### Job Title, Company
+*2020 - Present*
+- Key achievement one
+- Key achievement two
+
+## Education
+### Degree, University
+2015 - 2019
+
+---
+
+## Skills
+- Skill 1
+- Skill 2"></textarea>
+    </div>
+
+    <div class="help">
+      Supports: <code># ## ### ####</code> headers, <code>**bold**</code>, <code>*italic*</code>, <code>[links](url)</code>, <code>- lists</code>, <code>---</code> dividers
+    </div>
+
+    <button class="primary" id="generate">Generate Resume</button>
     <div class="error-message" id="error-message"></div>
   </div>
 
   <script>
+    let selectedTemplate = 'classic';
+
+    // Template selection
+    document.querySelectorAll('.template-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.template-btn').forEach(b => b.classList.remove('selected'));
+        btn.classList.add('selected');
+        selectedTemplate = btn.dataset.template;
+      });
+    });
+
+    // Generate button
     document.getElementById('generate').onclick = () => {
       const markdown = document.getElementById('markdown-input').value.trim();
+      const errorEl = document.getElementById('error-message');
+
       if (!markdown) {
-        document.getElementById('error-message').textContent = 'Error: Markdown content cannot be empty.';
+        errorEl.textContent = 'Please enter some Markdown content.';
+        errorEl.classList.add('visible');
         return;
       }
-      document.getElementById('error-message').textContent = '';
-      parent.postMessage({ pluginMessage: { type: 'create-resume', markdown } }, '*');
+
+      errorEl.classList.remove('visible');
+      parent.postMessage({
+        pluginMessage: {
+          type: 'create-resume',
+          markdown: markdown,
+          template: selectedTemplate
+        }
+      }, '*');
     };
 
+    // Handle errors from plugin
     onmessage = (event) => {
-      if (event.data.pluginMessage.type === 'error') {
-        document.getElementById('error-message').textContent = 'Error: ' + event.data.pluginMessage.message;
+      if (event.data.pluginMessage && event.data.pluginMessage.type === 'error') {
+        const errorEl = document.getElementById('error-message');
+        errorEl.textContent = 'Error: ' + event.data.pluginMessage.message;
+        errorEl.classList.add('visible');
       }
     };
+
+    // Ctrl/Cmd + Enter to generate
+    document.getElementById('markdown-input').addEventListener('keydown', (e) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+        document.getElementById('generate').click();
+      }
+    });
   </script>
 </body>
 </html>
